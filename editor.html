@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metin Düzenleyici</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @keyframes fadeInBody {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes pulsate {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes backgroundFade {
+            from { background: linear-gradient(135deg, #f5f7fa, #c3cfe2); }
+            to { background: linear-gradient(135deg, #c3cfe2, #f5f7fa); }
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px #fff; }
+            50% { box-shadow: 0 0 20px #ff6b6b, 0 0 30px #f06595, 0 0 40px #cc5de8, 0 0 50px #845ef7; }
+            100% { box-shadow: 0 0 5px #fff; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+
+        body {
+            animation: fadeInBody 2s ease;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            animation: backgroundFade 5s infinite alternate;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h2 {
+            animation: slideIn 3s ease;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .toolbar button {
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .toolbar:hover button {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            color: #fff;
+            background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7, #5c7cfa, #339af0, #22b8cf, #20c997, #51cf66, #94d82d, #fcc419, #ff922b);
+            background-size: 300% 300%;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            animation: gradientShift 3s ease infinite, pulsate 1.5s infinite, glow 2s infinite, shake 0.5s infinite;
+            margin: 10px;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        #editor, #preview {
+            animation: fadeIn 2s ease;
+            width: 90%;
+            max-width: 800px;
+            height: 60vh;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 20px;
+            overflow-y: auto;
+        }
+
+        .toolbar select, .toolbar input[type="color"] {
+            padding: 5px;
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            button {
+                padding: 10px 20px;
+                font-size: 16px;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #editor, #preview {
+                height: 50vh;
+            }
+        }
+
+        @media (max-width: 480px) {
+            button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #editor, #preview {
+                height: 40vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Metin Düzenleyici</h2>
+    <div class="toolbar">
+        <button onclick="formatText('bold')">Kalın</button>
+        <button onclick="formatText('italic')">İtalik</button>
+        <button onclick="formatText('underline')">Altı Çizili</button>
+        <button onclick="alignText('justifyLeft')">Sola Hizala</button>
+        <button onclick="alignText('justifyCenter')">Ortala</button>
+        <button onclick="alignText('justifyRight')">Sağa Hizala</button>
+        <button onclick="alignText('justifyFull')">İki Yana Yasla</button>
+        <button onclick="insertList('insertUnorderedList')">Madde İşaretli Liste</button>
+        <button onclick="insertList('insertOrderedList')">Sayılı Liste</button>
+        <button onclick="insertTable()">Tablo Ekle</button>
+        <button onclick="insertImage()">Resim Ekle</button>
+        <button onclick="insertLink()">Bağlantı Ekle</button>
+        <button onclick="insertExcelTable()">Excel Tablosu Ekle</button>
+        <button onclick="insertWordArt()">WordArt Ekle</button>
+        <input type="color" id="colorPicker" onchange="changeColor(this.value)">
+        <input type="color" id="bgColorPicker" onchange="changeBgColor(this.value)">
+        <select onchange="changeFont(this.value)">
+            <option value="Arial">Arial</option>
+            <option value="Courier New">Courier New</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Verdana">Verdana</option>
+        </select>
+        <select id="fontSizeSelect" onchange="changeFontSize(this.value)">
+            <option value="8">8pt</option>
+            <option value="10">10pt</option>
+            <option value="12">12pt</option>
+            <option value="14">14pt</option>
+            <option value="18">18pt</option>
+            <option value="24">24pt</option>
+            <option value="36">36pt</option>
+            <option value="48">48pt</option>
+            <option value="60">60pt</option>
+            <option value="72">72pt</option>
+            <option value="80">80pt</option>
+            <option value="100">100pt</option>
+        </select>
+        <select id="paperSize">
+            <option value="A4">A4 - 210×297 mm</option>
+            <option value="A5">A5 - 148×210 mm</option>
+            <option value="A6">A6 - 105×148 mm</option>
+        </select>
+        <input type="file" id="fileInput" onchange="loadFile(event)">
+        <div class="side-buttons">
+            <button onclick="previewText()">Önizleme</button>
+            <button onclick="downloadText()">İndir</button>
+            <button onclick="saveToFile()">Dosya Olarak Kaydet</button>
+            <button onclick="toggleOrientation()">Yatay/Dikey</button>
+            <button onclick="alignTable('left')">Tabloyu Sola Hizala</button>
+            <button onclick="alignTable('center')">Tabloyu Ortala</button>
+            <button onclick="alignTable('right')">Tabloyu Sağa Hizala</button>
+            <button onclick="mergeCells()">Hücreleri Birleştir</button>
+            <button onclick="splitCell()">Hücreyi Böl</button>
+            <button onclick="insertRow()">Satır Ekle</button>
+            <button onclick="insertCell()">Hücre Ekle</button>
+            <button onclick="insertCurrency()">Para Birimi Ekle</button>
+            <button onclick="insertTime()">Saat Ekle</button>
+            <button onclick="shareText()">Paylaş</button>
+            <input type="color" id="cellBgColorPicker" onchange="changeCellBgColor(this.value)" value="#ffffff">
+        </div>
+    </div>
+    <div id="editor" contenteditable="true">Buraya yazınız...</div>
+    <div id="preview"></div>
+    <script>
+        function formatText(command) {
+            document.execCommand(command, false, null);
+        }
+
+        function alignText(command) {
+            document.execCommand(command, false, null);
+        }
+
+        function changeColor(color) {
+            document.execCommand('foreColor', false, color);
+        }
+
+        function changeBgColor(color) {
+            document.execCommand('hiliteColor', false, color);
+        }
+
+        function changeFont(font) {
+            document.execCommand('fontName', false, font);
+        }
+
+        function changeFontSize(size) {
+            document.execCommand('fontSize', false, size);
+        }
+
+        function insertList(command) {
+            document.execCommand(command, false, null);
+        }
+
+        function insertTable() {
+            let rows = prompt("Satır sayısını girin:", 2);
+            let cols = prompt("Sütun sayısını girin:", 2);
+            if (rows > 0 && cols > 0) {
+                let table = "<table border='1'>";
+                for (let i = 0; i < rows; i++) {
+                    table += "<tr>";
+                    for (let j = 0; j < cols; j++) {
+                        table += "<td> </td>";
+                    }
+                    table += "</tr>";
+                }
+                table += "</table>";
+                document.execCommand('insertHTML', false, table);
+            }
+        }
+
+        function insertImage() {
+            let url = prompt("Resim URL'sini girin:");
+            if (url) {
+                document.execCommand('insertImage', false, url);
+            }
+        }
+
+        function insertLink() {
+            let url = prompt("Bağlantı URL'sini girin:");
+            if (url) {
+                document.execCommand('createLink', false, url);
+            }
+        }
+
+        function insertExcelTable() {
+            let rows = prompt("Satır sayısını girin:", 5);
+            let cols = prompt("Sütun sayısını girin:", 5);
+            if (rows > 0 && cols > 0) {
+                let table = "<table border='1' style='border-collapse: collapse;'>";
+                for (let i = 0; i < rows; i++) {
+                    table += "<tr>";
+                    for (let j = 0; j < cols; j++) {
+                        table += "<td style='padding: 5px; border: 1px solid #000;'> </td>";
+                    }
+                    table += "</tr>";
+                }
+                table += "</table>";
+                document.execCommand('insertHTML', false, table);
+            }
+        }
+
+        function insertWordArt() {
+            let text = prompt("WordArt metnini girin:");
+            if (text) {
+                let wordArt = `<span style="font-family: 'Comic Sans MS', cursive, sans-serif; font-size: 2em; color: #ff6b6b; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);">${text}</span>`;
+                document.execCommand('insertHTML', false, wordArt);
+            }
+        }
+
+        function saveText() {
+            let text = document.getElementById("editor").innerHTML;
+            localStorage.setItem("savedText", text);
+            alert("Metin kaydedildi!");
+        }
+
+        function previewText() {
+            let preview = document.getElementById("preview");
+            let editorContent = document.getElementById("editor").innerHTML;
+            preview.innerHTML = editorContent;
+            preview.style.display = "block";
+        }
+
+        function downloadText() {
+            let text = document.getElementById("editor").innerHTML;
+            let blob = new Blob([text], { type: "text/plain" }); // Metni düz metin olarak kaydet
+            let url = URL.createObjectURL(blob);
+            let a = document.createElement("a");
+            a.href = url;
+            a.download = "metin.txt"; // Dosya uzantısını .txt olarak değiştir
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function saveToFile() {
+            let text = document.getElementById("editor").innerHTML;
+            let blob = new Blob([text], { type: "text/plain" }); // Metni düz metin olarak kaydet
+            let url = URL.createObjectURL(blob);
+            let a = document.createElement("a");
+            a.href = url;
+            a.download = "metin.txt"; // Dosya uzantısını .txt olarak değiştir
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function loadFile(event) {
+            let input = event.target;
+            let reader = new FileReader();
+            reader.onload = function() {
+                let text = reader.result;
+                document.getElementById("editor").innerHTML = text;
+            };
+            reader.readAsText(input.files[0]);
+        }
+
+        function toggleOrientation() {
+            let editor = document.getElementById("editor");
+            if (editor.style.width === "297mm") {
+                editor.style.width = "210mm";
+                editor.style.height = "297mm";
+            } else {
+                editor.style.width = "297mm";
+                editor.style.height = "210mm";
+            }
+        }
+
+        function alignTable(alignment) {
+            let editor = document.getElementById("editor");
+            let tables = editor.getElementsByTagName("table");
+            if (tables.length > 0) {
+                let table = tables[0];
+                table.style.marginLeft = alignment === 'left' ? '0' : alignment === 'center' ? 'auto' : 'auto';
+                table.style.marginRight = alignment === 'right' ? '0' : alignment === 'center' ? 'auto' : 'auto';
+            } else {
+                alert("Lütfen hizalamak için bir tablo ekleyin.");
+            }
+        }
+
+        function mergeCells() {
+            let editor = document.getElementById("editor");
+            let selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                let range = selection.getRangeAt(0);
+                let startContainer = range.startContainer;
+                let endContainer = range.endContainer;
+                if (startContainer === endContainer && startContainer.nodeName === "TD") {
+                    let cell = startContainer;
+                    let colspan = cell.colSpan || 1;
+                    let rowspan = cell.rowSpan || 1;
+                    cell.colSpan = colspan + 1;
+                    cell.rowSpan = rowspan + 1;
+                } else {
+                    alert("Lütfen bir hücre seçin.");
+                }
+            }
+        }
+
+        function splitCell() {
+            let editor = document.getElementById("editor");
+            let selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                let range = selection.getRangeAt(0);
+                let startContainer = range.startContainer;
+                if (startContainer.nodeName === "TD") {
+                    let cell = startContainer;
+                    let colspan = cell.colSpan || 1;
+                    let rowspan = cell.rowSpan || 1;
+                    if (colspan > 1) {
+                        cell.colSpan = colspan - 1;
+                    }
+                    if (rowspan > 1) {
+                        cell.rowSpan = rowspan - 1;
+                    }
+                } else {
+                    alert("Lütfen bir hücre seçin.");
+                }
+            }
+        }
+
+        function changeCellBgColor(color) {
+            let editor = document.getElementById("editor");
+            let selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                let range = selection.getRangeAt(0);
+                let startContainer = range.startContainer;
+                if (startContainer.nodeName === "TD") {
+                    let cell = startContainer;
+                    cell.style.backgroundColor = color;
+                } else {
+                    alert("Lütfen bir hücre seçin.");
+                }
+            }
+        }
+
+        window.onload = function() {
+            let savedText = localStorage.getItem("savedText");
+            if (savedText) {
+                document.getElementById("editor").innerHTML = savedText;
+            }
+        };
+    </script>
+</body>
+</html>

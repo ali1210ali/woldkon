@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ana Sayfa</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            animation: backgroundFade 5s infinite alternate;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            animation: fadeIn 2s ease-in-out;
+            font-size: 3em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        p {
+            color: #333;
+            font-size: 1.2em;
+            text-align: center;
+            max-width: 800px;
+            margin: 20px;
+            animation: fadeInText 2s ease-in-out;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            color: #fff;
+            background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7, #5c7cfa, #339af0, #22b8cf, #20c997, #51cf66, #94d82d, #fcc419, #ff922b);
+            background-size: 300% 300%;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            animation: slideIn 2s ease-in-out, gradientShift 3s ease infinite;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeInText {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes backgroundFade {
+            from { background: linear-gradient(135deg, #f5f7fa, #c3cfe2); }
+            to { background: linear-gradient(135deg, #c3cfe2, #f5f7fa); }
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .about p {
+            white-space: pre-wrap;
+            overflow: hidden;
+            border-right: .15em solid orange;
+            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+        }
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: orange; }
+        }
+        .menu {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            animation: fadeInMenu 2s ease-in-out;
+        }
+        @keyframes fadeInMenu {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .contact {
+            animation: fadeInContact 2s ease-in-out;
+        }
+        @keyframes fadeInContact {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Hoş Geldiniz</h1>
+    <button onclick="goToEditor()">Metin Düzenleyiciye Git</button>
+
+    <div class="about">
+        <h2>Hakkımda</h2>
+        <p id="about-text"></p>
+    </div>
+
+    <div class="contact">
+        <h2>İletişim Bilgileri</h2>
+        <p>📞 Telefon: 0505 431 5002</p>
+        <p>📧 E-posta: alikayrakucul@gmail.com</p>
+        <p>🌐 Sosyal Medya: [Varsa sosyal medya]</p>
+    </div>
+
+    <div class="menu">
+        <button onclick="goToEditor()">Metin Düzenleyici</button>
+        <button onclick="goToWhatsApp()">WhatsApp</button>
+    </div>
+
+    <script>
+        function goToEditor() {
+            window.location.href = 'editor.html';
+        }
+
+        function goToWhatsApp() {
+            window.location.href = 'https://wa.me/9050504315002';
+        }
+
+        function typeWriter(text, elementId, delay = 32) {
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    document.getElementById(elementId).innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, delay);
+                }
+            }
+            type();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const aboutText = "Merhaba! Ben Ali Kayra Küçük. Teknoloji, yazılım ve tasarım gibi alanlarda edindiğim bilgileri paylaşarak, benzer ilgi alanlarına sahip insanların terminali. Bu site, hem kendi projelerini sergileyebileceğim hem de insanlara faydalı içerikler sunabileceğim bir platform olarak tasarlandı. Yeni fikirlerin ortaya çıkışı, dijital dünyaya katkı sağlamak ve sürekli olarak tanıtımını yapmak benim için büyük bir tutku. Siz de benimle iletişimle fikirlerinizi paylaşabilir veya herhangi bir konuda destek alabilirsiniz.";
+            typeWriter(aboutText, "about-text");
+        });
+    </script>
+</body>
+</html>
