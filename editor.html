@@ -74,21 +74,12 @@
             justify-content: center;
             gap: 10px;
             margin-bottom: 20px;
-        }
-
-        .toolbar button {
-            opacity: 0;
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-
-        .toolbar:hover button {
-            opacity: 1;
-            transform: translateY(0);
+            overflow-x: auto;
         }
 
         button {
-            padding: 15px 30px;
-            font-size: 18px;
+            padding: 10px 20px;
+            font-size: 14px;
             color: #fff;
             background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7, #5c7cfa, #339af0, #22b8cf, #20c997, #51cf66, #94d82d, #fcc419, #ff922b);
             background-size: 300% 300%;
@@ -97,7 +88,7 @@
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.3s ease;
             animation: gradientShift 3s ease infinite, pulsate 1.5s infinite, glow 2s infinite, shake 0.5s infinite;
-            margin: 10px;
+            margin: 5px;
         }
 
         button:hover {
@@ -117,13 +108,13 @@
 
         .toolbar select, .toolbar input[type="color"] {
             padding: 5px;
-            font-size: 16px;
+            font-size: 14px;
         }
 
         @media (max-width: 768px) {
             button {
-                padding: 10px 20px;
-                font-size: 16px;
+                padding: 8px 16px;
+                font-size: 12px;
             }
 
             .toolbar {
@@ -138,8 +129,8 @@
 
         @media (max-width: 480px) {
             button {
-                padding: 8px 16px;
-                font-size: 14px;
+                padding: 6px 12px;
+                font-size: 10px;
             }
 
             .toolbar {
@@ -168,7 +159,9 @@
         <button onclick="insertTable()">Tablo Ekle</button>
         <button onclick="insertImage()">Resim Ekle</button>
         <button onclick="insertLink()">Bağlantı Ekle</button>
- <input type="color" id="colorPicker" onchange="changeColor(this.value)">
+        <button onclick="insertExcelTable()">Excel Tablosu Ekle</button>
+        <button onclick="insertWordArt()">WordArt Ekle</button>
+        <input type="color" id="colorPicker" onchange="changeColor(this.value)">
         <input type="color" id="bgColorPicker" onchange="changeBgColor(this.value)">
         <select onchange="changeFont(this.value)">
             <option value="Arial">Arial</option>
