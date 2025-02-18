@@ -4,27 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Metin Düzenleyici</title>
-    <link rel="stylesheet" href="style.css">
     <style>
-        @keyframes fadeInBody {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideIn {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        @keyframes pulsate {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        /* Genel stiller */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            animation: backgroundFade 5s infinite alternate;
         }
 
         @keyframes backgroundFade {
@@ -32,40 +23,13 @@
             to { background: linear-gradient(135deg, #c3cfe2, #f5f7fa); }
         }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        @keyframes glow {
-            0% { box-shadow: 0 0 5px #fff; }
-            50% { box-shadow: 0 0 20px #ff6b6b, 0 0 30px #f06595, 0 0 40px #cc5de8, 0 0 50px #845ef7; }
-            100% { box-shadow: 0 0 5px #fff; }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
-        }
-
-        body {
-            animation: fadeInBody 2s ease;
-            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-            animation: backgroundFade 5s infinite alternate;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
-
         h2 {
             animation: slideIn 3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .toolbar {
@@ -77,26 +41,35 @@
             overflow-x: auto;
         }
 
-        button {
+        .led-button {
             padding: 10px 20px;
             font-size: 14px;
             color: #fff;
-            background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #845ef7, #5c7cfa, #339af0, #22b8cf, #20c997, #51cf66, #94d82d, #fcc419, #ff922b);
-            background-size: 300% 300%;
-            border: none;
+            background-color: #000;
+            border: 2px solid #fff;
             border-radius: 25px;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            animation: gradientShift 3s ease infinite, pulsate 1.5s infinite, glow 2s infinite, shake 0.5s infinite;
+            transition: all 0.3s ease-in-out;
+            animation: led-glow 1.5s infinite alternate;
             margin: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            box-shadow: 0 0 5px #ff00ff;
         }
 
-        button:hover {
-            transform: scale(1.05);
+        @keyframes led-glow {
+            0%, 100% { box-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
+            50% { box-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 20px #00ffff; }
+        }
+
+        .led-button:hover {
+            color: #000;
+            background-color: #fff;
+            box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff;
         }
 
         #editor, #preview {
-            animation: fadeIn 2s ease;
             width: 90%;
             max-width: 800px;
             height: 60vh;
@@ -104,6 +77,13 @@
             padding: 10px;
             margin-top: 20px;
             overflow-y: auto;
+            animation: fadeIn 2s ease;
+            box-sizing: border-box; /* Padding'in genişliğe dahil olmasını sağlar */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .toolbar select, .toolbar input[type="color"] {
@@ -111,8 +91,9 @@
             font-size: 14px;
         }
 
+        /* Responsive Tasarım */
         @media (max-width: 768px) {
-            button {
+            .led-button {
                 padding: 8px 16px;
                 font-size: 12px;
             }
@@ -128,7 +109,7 @@
         }
 
         @media (max-width: 480px) {
-            button {
+            .led-button {
                 padding: 6px 12px;
                 font-size: 10px;
             }
@@ -147,20 +128,20 @@
 <body>
     <h2>Metin Düzenleyici</h2>
     <div class="toolbar">
-        <button onclick="formatText('bold')">Kalın</button>
-        <button onclick="formatText('italic')">İtalik</button>
-        <button onclick="formatText('underline')">Altı Çizili</button>
-        <button onclick="alignText('justifyLeft')">Sola Hizala</button>
-        <button onclick="alignText('justifyCenter')">Ortala</button>
-        <button onclick="alignText('justifyRight')">Sağa Hizala</button>
-        <button onclick="alignText('justifyFull')">İki Yana Yasla</button>
-        <button onclick="insertList('insertUnorderedList')">Madde İşaretli Liste</button>
-        <button onclick="insertList('insertOrderedList')">Sayılı Liste</button>
-        <button onclick="insertTable()">Tablo Ekle</button>
-        <button onclick="insertImage()">Resim Ekle</button>
-        <button onclick="insertLink()">Bağlantı Ekle</button>
-        <button onclick="insertExcelTable()">Excel Tablosu Ekle</button>
-        <button onclick="insertWordArt()">WordArt Ekle</button>
+        <button class="led-button" onclick="formatText('bold')">Kalın</button>
+        <button class="led-button" onclick="formatText('italic')">İtalik</button>
+        <button class="led-button" onclick="formatText('underline')">Altı Çizili</button>
+        <button class="led-button" onclick="alignText('justifyLeft')">Sola Hizala</button>
+        <button class="led-button" onclick="alignText('justifyCenter')">Ortala</button>
+        <button class="led-button" onclick="alignText('justifyRight')">Sağa Hizala</button>
+        <button class="led-button" onclick="alignText('justifyFull')">İki Yana Yasla</button>
+        <button class="led-button" onclick="insertList('insertUnorderedList')">Madde İşaretli Liste</button>
+        <button class="led-button" onclick="insertList('insertOrderedList')">Sayılı Liste</button>
+        <button class="led-button" onclick="insertTable()">Tablo Ekle</button>
+        <button class="led-button" onclick="insertImage()">Resim Ekle</button>
+        <button class="led-button" onclick="insertLink()">Bağlantı Ekle</button>
+        <button class="led-button" onclick="insertExcelTable()">Excel Tablosu Ekle</button>
+        <button class="led-button" onclick="insertWordArt()">WordArt Ekle</button>
         <input type="color" id="colorPicker" onchange="changeColor(this.value)">
         <input type="color" id="bgColorPicker" onchange="changeBgColor(this.value)">
         <select onchange="changeFont(this.value)">
@@ -191,20 +172,20 @@
         </select>
         <input type="file" id="fileInput" onchange="loadFile(event)">
         <div class="side-buttons">
-            <button onclick="previewText()">Önizleme</button>
-            <button onclick="downloadText()">İndir</button>
-            <button onclick="saveToFile()">Dosya Olarak Kaydet</button>
-            <button onclick="toggleOrientation()">Yatay/Dikey</button>
-            <button onclick="alignTable('left')">Tabloyu Sola Hizala</button>
-            <button onclick="alignTable('center')">Tabloyu Ortala</button>
-            <button onclick="alignTable('right')">Tabloyu Sağa Hizala</button>
-            <button onclick="mergeCells()">Hücreleri Birleştir</button>
-            <button onclick="splitCell()">Hücreyi Böl</button>
-            <button onclick="insertRow()">Satır Ekle</button>
-            <button onclick="insertCell()">Hücre Ekle</button>
-            <button onclick="insertCurrency()">Para Birimi Ekle</button>
-            <button onclick="insertTime()">Saat Ekle</button>
-            <button onclick="shareText()">Paylaş</button>
+            <button class="led-button" onclick="previewText()">Önizleme</button>
+            <button class="led-button" onclick="downloadText()">İndir</button>
+            <button class="led-button" onclick="saveToFile()">Dosya Olarak Kaydet</button>
+            <button class="led-button" onclick="toggleOrientation()">Yatay/Dikey</button>
+            <button class="led-button" onclick="alignTable('left')">Tabloyu Sola Hizala</button>
+            <button class="led-button" onclick="alignTable('center')">Tabloyu Ortala</button>
+            <button class="led-button" onclick="alignTable('right')">Tabloyu Sağa Hizala</button>
+            <button class="led-button" onclick="mergeCells()">Hücreleri Birleştir</button>
+            <button class="led-button" onclick="splitCell()">Hücreyi Böl</button>
+            <button class="led-button" onclick="insertRow()">Satır Ekle</button>
+            <button class="led-button" onclick="insertCell()">Hücre Ekle</button>
+            <button class="led-button" onclick="insertCurrency()">Para Birimi Ekle</button>
+            <button class="led-button" onclick="insertTime()">Saat Ekle</button>
+            <button class="led-button" onclick="shareText()">Paylaş</button>
             <input type="color" id="cellBgColorPicker" onchange="changeCellBgColor(this.value)" value="#ffffff">
         </div>
     </div>
@@ -439,7 +420,6 @@
                 alert('Paylaşım API\'si bu tarayıcıda desteklenmiyor.');
             }
         }
-
         window.onload = function() {
             let savedText = localStorage.getItem("savedText");
             if (savedText) {
