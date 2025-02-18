@@ -78,7 +78,7 @@
             margin-top: 20px;
             overflow-y: auto;
             animation: fadeIn 2s ease;
-            box-sizing: border-box; /* Padding'in genişliğe dahil olmasını sağlar */
+            box-sizing: border-box;
         }
 
         @keyframes fadeIn {
@@ -176,6 +176,7 @@
             <button class="led-button" onclick="downloadText()">İndir</button>
             <button class="led-button" onclick="saveToFile()">Dosya Olarak Kaydet</button>
             <button class="led-button" onclick="toggleOrientation()">Yatay/Dikey</button>
+            <button class="led-button" onclick="alignTable('left')">Tabloyu Sola Hizala</button>
             <button class="led-button" onclick="alignTable('left')">Tabloyu Sola Hizala</button>
             <button class="led-button" onclick="alignTable('center')">Tabloyu Ortala</button>
             <button class="led-button" onclick="alignTable('right')">Tabloyu Sağa Hizala</button>
