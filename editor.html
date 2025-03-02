@@ -74,8 +74,8 @@
             overflow-y: auto;
             animation: fadeIn 2s ease;
             box-sizing: border-box;
-            background: black;
-            color: white;
+            background: white;
+            color: black;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
@@ -174,7 +174,7 @@
             <button class="toolbar-button" onclick="downloadAsPDF()">PDF Olarak İndir</button>
             <button class="toolbar-button" onclick="downloadTextAsFile()">Düz Metin Olarak İndir</button>
             <button class="toolbar-button" onclick="downloadHTMLAsFile()">HTML Olarak İndir</button>
-            <button class="toolbar-button" onclick="downloadTableAsFile()">Tablo Olarak İndir</button>
+            <button class="toolbar-button" onclick="downloadContentAsFile()">Metin ve Tablo Olarak İndir</button>
             <input type="color" id="colorPicker" onchange="changeColor(this.value)">
             <input type="color" id="bgColorPicker" onchange="changeBgColor(this.value)">
             <select onchange="changeFont(this.value)">
@@ -377,13 +377,20 @@
             yaziElementi.style.fontFamily = 'Arial, sans-serif';
         }
 
-        function downloadText() {
-            let text = document.getElementById("editor").innerHTML;
-            let blob = new Blob([text], { type: "text/html" });
-            let url = URL.createObjectURL(blob);
-            let a = document.createElement("a");
+        // Metin ve tabloyu aynı dosyada indirme fonksiyonu
+        function downloadContentAsFile() {
+            const textContent = document.getElementById("editor").innerHTML; // Metin içeriğini al
+            const tableContent = document.querySelector("#editor table"); // Tabloyu al
+            let content = `<html><body>${textContent}`;
+            if (tableContent) {
+                content += tableContent.outerHTML; // Tabloyu ekle
+            }
+            content += `</body></html>`;
+            const blob = new Blob([content], { type: "text/html;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
             a.href = url;
-            a.download = "metin.html";
+            a.download = "metin_ve_tablo.html"; // Dosya adı
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -475,7 +482,7 @@
             const content = document.getElementById("editor");
 
             // HTML içeriğini PDF'ye ekle
-            html2canvas(content, { scale: 2, backgroundColor: "#000000" }).then(canvas => { // Arka plan rengi siyah
+            html2canvas(content, { scale: 2, backgroundColor: "#ffffff" }).then(canvas => { // Arka plan rengi beyaz
                 const imgData = canvas.toDataURL('image/png');
                 const imgWidth = 190; // PDF sayfasının genişliği
                 const pageHeight = 295; // PDF sayfasının yüksekliği
