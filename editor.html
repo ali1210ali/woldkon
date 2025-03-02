@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gelişmiş Metin Düzenleyici</title>
+    <title>woldkon</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -169,6 +169,7 @@
             <button class="toolbar-button" onclick="toggleDarkMode()">Gece Modu</button>
             <button class="toolbar-button" onclick="openEmojiPicker()">😊 Emoji Ekle</button>
             <button class="toolbar-button" onclick="openFindReplace()">Bul ve Değiştir</button>
+            <button class="toolbar-button" onclick="toggleAudio()">Ses Aç/Kapat</button>
             <button class="toolbar-button" onclick="downloadAsPDF()">PDF Olarak İndir</button>
             <input type="color" id="colorPicker" onchange="changeColor(this.value)">
             <input type="color" id="bgColorPicker" onchange="changeBgColor(this.value)">
@@ -254,6 +255,7 @@
             const isLoggedIn = localStorage.getItem('isLoggedIn');
             if (isLoggedIn === 'true') {
                 showEditorPage();
+                playBackgroundAudio(); // Kullanıcı giriş yaptığında sesi çal
             } else {
                 showLoginPage();
             }
@@ -265,7 +267,7 @@
             }
 
             // MP3 dosyasını yükleme
-            document.getElementById('backgroundAudio').src = 'mex.mp3';
+            document.getElementById('backgroundAudio').src = 'm.mp3';
         };
 
         // Metin biçimlendirme fonksiyonları
@@ -466,15 +468,33 @@
             const doc = new jsPDF();
 
             // Metin içeriğini al
-            const content = document.getElementById("editor").innerHTML;
+            const content = document.getElementById("editor");
 
-            // PDF'ye metni ekle
-            doc.fromHTML(content, 15, 15, {
-                'width': 170
+            // HTML içeriğini PDF'ye ekle
+            html2canvas(content).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = 190; // PDF sayfasının genişliği
+                const pageHeight = 295; // PDF sayfasının yüksekliği
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let heightLeft = imgHeight;
+
+                let position = 0;
+
+                // İlk sayfayı ekle
+                doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                // Eğer daha fazla sayfa varsa, yeni sayfalar ekle
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    doc.addPage();
+                    doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                // PDF dosyasını indirme
+                doc.save('metin.pdf');
             });
-
-            // PDF dosyasını indirme
-            doc.save('metin.pdf');
         }
 
         // Kayıt olma fonksiyonu
@@ -493,6 +513,26 @@
             users.push({ username, password });
             localStorage.setItem('users', JSON.stringify(users));
             alert("Kayıt başarılı! Giriş yapabilirsiniz.");
+        }
+
+        // Arka plan sesini çalma fonksiyonu
+        function playBackgroundAudio() {
+            const audio = document.getElementById('backgroundAudio');
+            audio.play().catch(error => {
+                console.log("Ses çalma hatası:", error);
+            });
+        }
+
+        // Ses çalma/durdurma fonksiyonu
+        function toggleAudio() {
+            const audio = document.getElementById('backgroundAudio');
+            if (audio.paused) {
+                audio.play().catch(error => {
+                    console.log("Ses çalma hatası:", error);
+                });
+            } else {
+                audio.pause();
+            }
         }
     </script>
 </body>
