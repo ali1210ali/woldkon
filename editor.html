@@ -91,6 +91,17 @@
             border: 1px solid #ccc;
         }
 
+        /* Giriş alanları için stil */
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            max-width: 300px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
         /* Gece modu stilleri */
         .dark-mode {
             background: linear-gradient(135deg, #1e1e1e, #121212);
@@ -132,6 +143,7 @@
         <input type="text" id="username" placeholder="Kullanıcı Adı" autofocus>
         <input type="password" id="password" placeholder="Şifre">
         <button class="toolbar-button" onclick="login()">Giriş Yap</button>
+        <button class="toolbar-button" onclick="register()">Kayıt Ol</button>
         <p id="error-message" style="color: red; display: none;">Geçersiz kullanıcı adı veya şifre!</p>
     </div>
 
@@ -254,9 +266,6 @@
 
             // MP3 dosyasını yükleme
             document.getElementById('backgroundAudio').src = 'mex.mp3';
-
-            // İstatistikleri güncelle
-            updateStats();
         };
 
         // Metin biçimlendirme fonksiyonları
@@ -453,25 +462,37 @@
 
         // PDF indirme fonksiyonu
         function downloadAsPDF() {
-            const { jsPDF } = window.jspdf; // jsPDF kütüphanesini kullan
+            const { jsPDF } = window.jspdf; // jsPDF kütüphanesini kullanıyoruz
+            const doc = new jsPDF();
 
-            // Editor içeriğini al
-            const editor = document.getElementById('editor');
+            // Metin içeriğini al
+            const content = document.getElementById("editor").innerHTML;
 
-            // HTML içeriğini görüntüye dönüştür
-            html2canvas(editor).then((canvas) => {
-                const imgData = canvas.toDataURL('image/png'); // Görüntüyü base64 formatına dönüştür
-                const pdf = new jsPDF('p', 'mm', 'a4'); // Yeni bir PDF belgesi oluştur
-
-                const imgWidth = 210; // A4 kağıdının genişliği (mm)
-                const imgHeight = (canvas.height * imgWidth) / canvas.width; // Görüntü yüksekliğini orantılı olarak ayarla
-
-                // Görüntüyü PDF'e ekle
-                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-
-                // PDF'i indir
-                pdf.save('metin.pdf');
+            // PDF'ye metni ekle
+            doc.fromHTML(content, 15, 15, {
+                'width': 170
             });
+
+            // PDF dosyasını indirme
+            doc.save('metin.pdf');
+        }
+
+        // Kayıt olma fonksiyonu
+        function register() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Kullanıcı adı daha önce alınmış mı kontrol et
+            const existingUser = users.find(u => u.username === username);
+            if (existingUser) {
+                alert("Bu kullanıcı adı zaten alınmış!");
+                return;
+            }
+
+            // Yeni kullanıcıyı kaydet
+            users.push({ username, password });
+            localStorage.setItem('users', JSON.stringify(users));
+            alert("Kayıt başarılı! Giriş yapabilirsiniz.");
         }
     </script>
 </body>
