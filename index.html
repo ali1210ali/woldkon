@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ana Sayfa</title>
+    <title>Metin Düzenleyici - Ana Sayfa</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
         /* Genel stiller */
@@ -15,98 +15,48 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-            animation: backgroundFade 5s infinite alternate;
-            overflow-x: hidden; /* Yatay kaymayı engelle */
+            background-color: #ff9900f1; /* Arka plan rengi yeşil */
+            overflow-x: hidden;
         }
 
         /* Başlık stilleri */
         h1 {
-            color: #333;
+            color: #ff6017;
             margin-bottom: 20px;
             font-size: 3em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
-        /* Paragraf stilleri */
-        p {
-            color: #333;
-            font-size: 1.2em;
-            text-align: center;
-            max-width: 800px;
-            margin: 20px;
-        }
-
-        /* Buton stilleri (LED efektli) */
-        .led-button {
-            background-color: #000;
-            color: #fff;
+        /* Buton stilleri */
+        .action-button {
+            background: linear-gradient(135deg, #ff0000, #eeff00); /* Kırmızı ve sarı gradient */
+            color: #000000;
             padding: 15px 30px;
             font-size: 1.2em;
             font-family: 'Arial', sans-serif;
             font-weight: bold;
-            border: 2px solid #fff;
-            border-radius: 50px;
+            border: none;
+            border-radius: 5px;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             cursor: pointer;
             transition: all 0.3s ease-in-out;
-            animation: led-glow 1.5s infinite alternate;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             margin: 10px;
         }
 
-        .led-button:hover {
-            color: #000;
-            background-color: #fff;
-            box-shadow: 0 0 20px #fff, 0 0 40px #fff, 0 0 60px #fff, 0 0 80px #fff, 0 4px 6px rgba(0, 0, 0, 0.1);
+        .action-button.whatsapp {
+            background: linear-gradient(135deg, #ff3c00, #eeff00); /* WhatsApp yeşili gradient */
+        }
+
+        .action-button:hover {
             transform: scale(1.05);
-        }
-
-        @keyframes led-glow {
-            0%, 100% {
-                box-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 40px #ff00ff, 0 0 80px #ff00ff, 0 4px 6px rgba(0, 0, 0, 0.1);
-            }
-            50% {
-                box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 80px #00ffff, 0 0 160px #00ffff, 0 4px 6px rgba(0, 0, 0, 0.1);
-            }
-        }
-
-        /* Animasyonlar */
-        @keyframes backgroundFade {
-            from { background: linear-gradient(135deg, #f5f7fa, #c3cfe2); }
-            to { background: linear-gradient(135deg, #c3cfe2, #f5f7fa); }
-        }
-
-        /* Hakkımda bölümü */
-        .about {
-            margin: 20px;
-        }
-
-        .about p {
-            white-space: pre-wrap;
-            overflow: hidden;
-            border-right: .15em solid orange;
-            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
-        }
-
-        /* Menü stilleri */
-        .menu {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        /* İletişim bilgileri */
-        .contact {
-            margin-top: 20px;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
         }
 
         /* Responsive tasarım */
         @media (max-width: 768px) {
-            .led-button {
+            .action-button {
                 font-size: 1em;
                 padding: 10px 20px;
             }
@@ -114,65 +64,49 @@
             h1 {
                 font-size: 2em;
             }
-
-            p {
-                font-size: 1em;
-            }
         }
 
-        /* Eklenen animasyonlar ve efektler */
-        h1 {
-            animation: fadeInDown 1s ease-in-out;
+        /* Animasyonlar */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        p {
-            animation: fadeInUp 1s ease-in-out;
-        }
-
-        .led-button {
-            animation: zoomIn 1s ease-in-out;
-        }
-
-        .about {
-            animation: fadeInLeft 1s ease-in-out;
-        }
-
-        .contact {
-            animation: fadeInRight 1s ease-in-out;
-        }
-
-        /* Animate.css kütüphanesi */
-        .animate__animated {
-            animation-duration: 1s; /* Animasyon süresi */
+        .animate-fadeIn {
+            animation: fadeIn 1s ease-in-out;
         }
     </style>
 </head>
 <body>
     <h1 class="animate__animated animate__fadeInDown">Hoş Geldiniz</h1>
-    <button class="led-button animate__animated animate__zoomIn" onclick="goToEditor()">Metin Düzenleyiciye Git</button>
 
-    <div class="about animate__animated animate__fadeInLeft">
+    <!-- Metin Düzenleyiciye Git Butonu -->
+    <button class="action-button animate__animated animate__zoomIn" onclick="goToEditor()">Metin Düzenleyiciye Git</button>
+
+    <!-- WhatsApp Butonu -->
+    <button class="action-button whatsapp animate__animated animate__zoomIn" onclick="goToWhatsApp()">WhatsApp'ta Yaz</button>
+
+    <!-- Hakkımda bölümü -->
+    <div class="about animate-fadeIn">
         <h2>Hakkımda</h2>
-        <p id="about-text"></p>
+        <p id="about-text">Merhaba! Ben bir web geliştiriciyim. Bu sayfa, modern web tasarımı örneklerini içeriyor.</p>
     </div>
 
-    <div class="contact animate__animated animate__fadeInRight">
+    <!-- İletişim bilgileri -->
+    <div class="contact animate-fadeIn">
         <h2>İletişim Bilgileri</h2>
         <p> Telefon: 0505 431 5002</p>
         <p> E-posta: alikayrakucul@gmail.com</p>
         <p> Sosyal Medya: [Varsa sosyal medya]</p>
     </div>
 
-    <div class="menu">
-        <button class="led-button animate__animated animate__zoomIn" onclick="goToEditor()">Metin Düzenleyici</button>
-        <button class="led-button animate__animated animate__zoomIn" onclick="goToWhatsApp()">WhatsApp</button>
-    </div>
-
     <script>
+        // Metin Düzenleyiciye Git Fonksiyonu
         function goToEditor() {
             window.location.href = "editor.html";
         }
 
+        // WhatsApp'a Yönlendirme Fonksiyonu
         function goToWhatsApp() {
             window.location.href = "https://wa.me/05054315002";
         }
