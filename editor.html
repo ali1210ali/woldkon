@@ -74,7 +74,8 @@
             overflow-y: auto;
             animation: fadeIn 2s ease;
             box-sizing: border-box;
-            background: white;
+            background: black;
+            color: white;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
@@ -171,6 +172,8 @@
             <button class="toolbar-button" onclick="openFindReplace()">Bul ve Değiştir</button>
             <button class="toolbar-button" onclick="toggleAudio()">Ses Aç/Kapat</button>
             <button class="toolbar-button" onclick="downloadAsPDF()">PDF Olarak İndir</button>
+            <button class="toolbar-button" onclick="downloadTextAsFile()">Düz Metin Olarak İndir</button>
+            <button class="toolbar-button" onclick="downloadHTMLAsFile()">HTML Olarak İndir</button>
             <input type="color" id="colorPicker" onchange="changeColor(this.value)">
             <input type="color" id="bgColorPicker" onchange="changeBgColor(this.value)">
             <select onchange="changeFont(this.value)">
@@ -471,7 +474,7 @@
             const content = document.getElementById("editor");
 
             // HTML içeriğini PDF'ye ekle
-            html2canvas(content).then(canvas => {
+            html2canvas(content, { scale: 2, backgroundColor: "#000000" }).then(canvas => { // Arka plan rengi siyah
                 const imgData = canvas.toDataURL('image/png');
                 const imgWidth = 190; // PDF sayfasının genişliği
                 const pageHeight = 295; // PDF sayfasının yüksekliği
@@ -494,7 +497,37 @@
 
                 // PDF dosyasını indirme
                 doc.save('metin.pdf');
+            }).catch(error => {
+                console.error("Canvas oluşturma hatası:", error);
             });
+        }
+
+        // Düz metin olarak indirme fonksiyonu
+        function downloadTextAsFile() {
+            const text = document.getElementById("editor").innerText; // Düz metin al
+            const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "metin.txt"; // Düz metin dosyası adı
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // HTML olarak indirme fonksiyonu
+        function downloadHTMLAsFile() {
+            const htmlContent = document.getElementById("editor").innerHTML; // HTML içeriğini al
+            const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "metin.html"; // HTML dosyası adı
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         // Kayıt olma fonksiyonu
