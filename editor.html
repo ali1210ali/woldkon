@@ -3,31 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>woldkon</title>
+    <title>Woldkon - Gelişmiş Metin Düzenleyici</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Genel stiller */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(45deg, #ff6b6b, #007bff); /* Pembe ve mavi gradyan arka plan */
+            color: #333;
+        }
+
+        .container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #ffcc00, #ff6600);
-            animation: backgroundFade 5s infinite alternate;
-            padding: 10px;
-        }
-
-        @keyframes backgroundFade {
-            from { background: linear-gradient(135deg, #ffcc00, #ff6600); }
-            to { background: linear-gradient(135deg, #ff6600, #ffcc00); }
+            padding: 20px;
         }
 
         h2 {
-            animation: slideIn 3s ease;
+            color: white;
+            animation: slideIn 1s ease;
         }
 
         @keyframes slideIn {
@@ -41,262 +40,301 @@
             justify-content: center;
             gap: 10px;
             margin-bottom: 20px;
-            overflow-x: auto;
-        }
-
-        /* Havalı buton stili */
-        .toolbar-button {
-            padding: 10px 20px;
-            font-size: 14px;
-            color: white;
-            background: linear-gradient(45deg, #ff6600, #ffcc00);
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            margin: 5px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        .toolbar-button:hover {
-            background: linear-gradient(45deg, #ffcc00, #ff6600);
-        }
-
-        #editor, #preview {
-            width: 100%;
-            max-width: 800px;
-            height: 60vh;
-            border: 1px solid #ccc;
+            background: #ffffff;
             padding: 10px;
-            margin-top: 20px;
-            overflow-y: auto;
-            animation: fadeIn 2s ease;
-            box-sizing: border-box;
-            background: white;
-            color: black;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .toolbar select, .toolbar input[type="color"] {
-            padding: 5px;
+        .toolbar-button {
+            padding: 10px 20px;
             font-size: 14px;
-            border-radius: 5px;
+            color: white;
+            background: linear-gradient(45deg, #ff6b6b, #ffa07a);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .toolbar-button:hover {
+            background: linear-gradient(45deg, #ffa07a, #ff6b6b);
+            transform: scale(1.05);
+        }
+
+        .toolbar-button i {
+            font-size: 16px;
+        }
+
+        /* A4 sayfası boyutları */
+        @media print {
+            #editor {
+                width: 210mm; /* A4 genişliği */
+                height: 297mm; /* A4 yüksekliği */
+                overflow: hidden; /* Taşmayı önlemek için */
+                border: none; /* Kenarları kaldır */
+            }
+        }
+
+        #editor {
+            width: 100%; /* Ekranda tam genişlik */
+            max-width: 800px; /* Maksimum genişlik */
+            height: 60vh; /* Yükseklik */
             border: 1px solid #ccc;
+            padding: 20px;
+            margin-top: 20px;
+            overflow-y: auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            line-height: 1.6;
         }
 
-        /* Giriş alanları için stil */
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            max-width: 300px;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        #editor:focus {
+            outline: none;
+            border-color: #ff6b6b;
         }
 
-        /* Gece modu stilleri */
-        .dark-mode {
-            background: linear-gradient(135deg, #1e1e1e, #121212);
-            color: #ffffff;
-        }
-        .dark-mode #editor {
-            background: #2d2d2d;
-            color: #ffffff;
-            border-color: #444;
-        }
-
-        /* İstatistikler paneli */
-        #stats {
+        .stats {
             margin-top: 10px;
             font-size: 14px;
+            color: #666;
         }
 
-        /* Emoji seçici */
-        #emojiPicker {
+        .theme-selector {
+            margin-top: 20px;
+        }
+
+        .theme-button {
+            padding: 10px 20px;
+            font-size: 14px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-button.light {
+            background: #ffffff;
+            color: #333;
+        }
+
+        .theme-button.dark {
+            background: #333;
+            color: #ffffff;
+        }
+
+        .theme-button.blue {
+            background: #007bff;
+            color: #ffffff;
+        }
+
+        .theme-button.green {
+            background: #28a745;
+            color: #ffffff;
+        }
+
+        .theme-button:hover {
+            transform: scale(1.05);
+        }
+
+        .modal {
             display: none;
-            position: absolute;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             background: white;
-            border: 1px solid #ccc;
-            padding: 10px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 1000;
         }
 
-        /* Bul ve değiştir paneli */
-        #findReplace {
+        .modal-overlay {
             display: none;
-            margin-top: 10px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .modal-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .modal-content input, .modal-content button {
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .modal-content button {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .modal-content button:hover {
+            background: #ffa07a;
+        }
+
+        @media (max-width: 600px) {
+            .toolbar {
+                flex-direction: column;
+            }
+            .toolbar-button {
+                width: 100%;
+                margin-bottom: 5px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Giriş Sayfası -->
-    <div id="login-page">
-        <h2>Giriş Yap</h2>
-        <input type="text" id="username" placeholder="Kullanıcı Adı" autofocus>
-        <input type="password" id="password" placeholder="Şifre">
-        <button class="toolbar-button" onclick="login()">Giriş Yap</button>
-        <button class="toolbar-button" onclick="register()">Kayıt Ol</button>
-        <p id="error-message" style="color: red; display: none;">Geçersiz kullanıcı adı veya şifre!</p>
+    <div class="container">
+        <h2>Woldkon - Gelişmiş Metin Düzenleyici</h2>
+        <div class="toolbar">
+            <button class="toolbar-button" onclick="formatText('bold')"><i class="fas fa-bold"></i> Kalın</button>
+            <button class="toolbar-button" onclick="formatText('italic')"><i class="fas fa-italic"></i> İtalik</button>
+            <button class="toolbar-button" onclick="formatText('underline')"><i class="fas fa-underline"></i> Altı Çizili</button>
+            <button class="toolbar-button" onclick="formatText('strikeThrough')"><i class="fas fa-strikethrough"></i> Üstü Çizili</button>
+            <button class="toolbar-button" onclick="alignText('justifyLeft')"><i class="fas fa-align-left"></i> Sola Hizala</button>
+            <button class="toolbar-button" onclick="alignText('justifyCenter')"><i class="fas fa-align-center"></i> Ortala</button>
+            <button class="toolbar-button" onclick="alignText('justifyRight')"><i class="fas fa-align-right"></i> Sağa Hizala</button>
+            <button class="toolbar-button" onclick="insertList('insertUnorderedList')"><i class="fas fa-list-ul"></i> Madde İşaretli Liste</button>
+            <button class="toolbar-button" onclick="insertList('insertOrderedList')"><i class="fas fa-list-ol"></i> Sayılı Liste</button>
+            <button class="toolbar-button" onclick="insertTable()"><i class="fas fa-table"></i> Tablo Ekle</button>
+            <button class="toolbar-button" onclick="insertImage()"><i class="fas fa-image"></i> Resim Ekle</button>
+            <button class="toolbar-button" onclick="insertLink()"><i class="fas fa-link"></i> Bağlantı Ekle</button>
+            <button class="toolbar-button" onclick="insertExcelTable()"><i class="fas fa-file-excel"></i> Excel Tablosu Ekle</button>
+            <button class="toolbar-button" onclick="insertWordArt()"><i class="fas fa-paint-brush"></i> WordArt Ekle</button>
+            <button class="toolbar-button" onclick="toggleDarkMode()"><i class="fas fa-moon"></i> Gece Modu</button>
+            <button class="toolbar-button" onclick="openEmojiPicker()"><i class="fas fa-smile"></i> Emoji Ekle</button>
+            <button class="toolbar-button" onclick="openFindReplaceModal()"><i class="fas fa-search"></i> Bul ve Değiştir</button>
+            <button class="toolbar-button" onclick="downloadAsPDF()"><i class="fas fa-file-pdf"></i> PDF Olarak İndir</button>
+            <button class="toolbar-button" onclick="translateText()"><i class="fas fa-language"></i> Çevir</button>
+            <button class="toolbar-button" onclick="speakText()"><i class="fas fa-volume-up"></i> Sesli Oku</button>
+            <button class="toolbar-button" onclick="changeTextColor()"><i class="fas fa-paint-brush"></i> Renk Değiştir</button>
+            <button class="toolbar-button" onclick="changeTextSize()"><i class="fas fa-text-height"></i> Yazı Boyutu Değiştir</button>
+            <button class="toolbar-button" onclick="formatText('fontSize', '1')">Küçük</button>
+            <button class="toolbar-button" onclick="formatText('fontSize', '3')">Orta</button>
+            <button class="toolbar-button" onclick="formatText('fontSize', '5')">Büyük</button>
+            <button class="toolbar-button" onclick="formatText('fontSize', '7')">En Büyük</button>
+            <button class="toolbar-button" onclick="undo()"><i class="fas fa-undo"></i> Geri Al</button>
+            <button class="toolbar-button" onclick="redo()"><i class="fas fa-redo"></i> Yeniden Yap</button>
+            <button class="toolbar-button" onclick="openModal('helpModal')"><i class="fas fa-question-circle"></i> Yardım</button>
+            <button class="toolbar-button" onclick="copyText()"><i class="fas fa-copy"></i> Kopyala</button>
+            <button class="toolbar-button" onclick="pasteText()"><i class="fas fa-paste"></i> Yapıştır</button>
+            <button class="toolbar-button" onclick="openModal('settingsModal')"><i class="fas fa-cog"></i> Ayarlar</button>
+            <button class="toolbar-button" onclick="printDocument()"><i class="fas fa-print"></i> Yazdır</button>
+        </div>
+        <div id="editor" contenteditable="true" spellcheck="true">Buraya yazınız...</div>
+        <div class="stats">
+            Karakter: <span id="charCount">0</span> | 
+            Kelime: <span id="wordCount">0</span> | 
+            Satır: <span id="lineCount">0</span> | 
+            Cümle: <span id="sentenceCount">0</span> | 
+            Paragraf: <span id="paragraphCount">0</span>
+        </div>
+        <div class="theme-selector">
+            <button class="theme-button light" onclick="changeTheme('light')">Açık Tema</button>
+            <button class="theme-button dark" onclick="changeTheme('dark')">Koyu Tema</button>
+            <button class="theme-button blue" onclick="changeTheme('blue')">Mavi Tema</button>
+            <button class="theme-button green" onclick="changeTheme('green')">Yeşil Tema</button>
+        </div>
     </div>
 
-    <!-- Metin Düzenleyici Sayfası -->
-    <div id="editor-page" style="display: none;">
-        <h2>Gelişmiş Metin Düzenleyici</h2>
-        <div class="toolbar">
-            <button class="toolbar-button" onclick="formatText('bold')">Kalın</button>
-            <button class="toolbar-button" onclick="formatText('italic')">İtalik</button>
-            <button class="toolbar-button" onclick="formatText('underline')">Altı Çizili</button>
-            <button class="toolbar-button" onclick="alignText('justifyLeft')">Sola Hizala</button>
-            <button class="toolbar-button" onclick="alignText('justifyCenter')">Ortala</button>
-            <button class="toolbar-button" onclick="alignText('justifyRight')">Sağa Hizala</button>
-            <button class="toolbar-button" onclick="insertList('insertUnorderedList')">Madde İşaretli Liste</button>
-            <button class="toolbar-button" onclick="insertList('insertOrderedList')">Sayılı Liste</button>
-            <button class="toolbar-button" onclick="insertTable()">Tablo Ekle</button>
-            <button class="toolbar-button" onclick="insertImage()">Resim Ekle</button>
-            <button class="toolbar-button" onclick="insertLink()">Bağlantı Ekle</button>
-            <button class="toolbar-button" onclick="insertExcelTable()">Excel Tablosu Ekle</button>
-            <button class="toolbar-button" onclick="insertWordArt()">WordArt Ekle</button>
-            <button class="toolbar-button" onclick="buyutYazi()">Yazıyı Büyüt</button>
-            <button class="toolbar-button" onclick="yeniYaziTipi()">Yeni Yazı Tipi</button>
-            <button class="toolbar-button" onclick="toggleDarkMode()">Gece Modu</button>
-            <button class="toolbar-button" onclick="openEmojiPicker()">😊 Emoji Ekle</button>
-            <button class="toolbar-button" onclick="openFindReplace()">Bul ve Değiştir</button>
-            <button class="toolbar-button" onclick="toggleAudio()">Ses Aç/Kapat</button>
-            <button class="toolbar-button" onclick="downloadAsPDF()">PDF Olarak İndir</button>
-            <button class="toolbar-button" onclick="downloadTextAsFile()">Düz Metin Olarak İndir</button>
-            <button class="toolbar-button" onclick="downloadHTMLAsFile()">HTML Olarak İndir</button>
-            <button class="toolbar-button" onclick="downloadContentAsFile()">Metin ve Tablo Olarak İndir</button>
-            <input type="color" id="colorPicker" onchange="changeColor(this.value)">
-            <input type="color" id="bgColorPicker" onchange="changeBgColor(this.value)">
-            <select onchange="changeFont(this.value)">
+    <!-- Emoji Picker Modal -->
+    <div class="modal" id="emojiPickerModal">
+        <div class="modal-content">
+            <span onclick="insertEmoji('😊')">😊</span>
+            <span onclick="insertEmoji('😂')">😂</span>
+            <span onclick="insertEmoji('❤️')">❤️</span>
+            <span onclick="insertEmoji('🔥')">🔥</span>
+            <button onclick="closeModal('emojiPickerModal')">Kapat</button>
+        </div>
+    </div>
+    <div class="modal-overlay" id="emojiPickerOverlay"></div>
+
+    <!-- Bul ve Değiştir Modal -->
+    <div class="modal" id="findReplaceModal">
+        <div class="modal-content">
+            <input type="text" id="findText" placeholder="Bul">
+            <input type="text" id="replaceText" placeholder="Değiştir">
+            <button onclick="findAndReplace()">Uygula</button>
+            <button onclick="closeModal('findReplaceModal')">Kapat</button>
+        </div>
+    </div>
+    <div class="modal-overlay" id="findReplaceOverlay"></div>
+
+    <!-- Renk Seçim Modal'ı -->
+    <div class="modal" id="colorPickerModal">
+        <div class="modal-content">
+            <h3>Metin Rengi Seçin</h3>
+            <input type="color" id="textColor" value="#000000" onchange="applyTextColor()">
+            <button onclick="applyTextColor()">Uygula</button>
+            <button onclick="closeModal('colorPickerModal')">Kapat</button>
+        </div>
+    </div>
+    <div class="modal-overlay" id="colorPickerOverlay"></div>
+
+    <!-- Yazı Boyutu Seçim Modal'ı -->
+    <div class="modal" id="textSizeModal">
+        <div class="modal-content">
+            <h3>Yazı Boyutu Seçin</h3>
+            <input type="number" id="textSize" value="16" min="1" step="1">
+            <button onclick="applyTextSize()">Uygula</button>
+            <button onclick="closeModal('textSizeModal')">Kapat</button>
+        </div>
+    </div>
+    <div class="modal-overlay" id="textSizeOverlay"></div>
+
+    <!-- Yardım Modal -->
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <h3>Yardım</h3>
+            <p>Bu metin düzenleyici ile metinlerinizi düzenleyebilir, renklerini değiştirebilir ve daha fazlasını yapabilirsiniz.</p>
+            <button onclick="closeModal('helpModal')">Kapat</button>
+        </div>
+    </div>
+    <div class="modal-overlay" id="helpOverlay"></div>
+
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <h3>Ayarlar</h3>
+            <p>Buradan ayarları değiştirebilirsiniz.</p>
+            <label for="fontFamily">Yazı Tipi Seçin:</label>
+            <select id="fontFamily" onchange="changeFontFamily()">
                 <option value="Arial">Arial</option>
                 <option value="Courier New">Courier New</option>
                 <option value="Georgia">Georgia</option>
                 <option value="Times New Roman">Times New Roman</option>
                 <option value="Verdana">Verdana</option>
             </select>
-            <select id="fontSizeSelect" onchange="changeFontSize(this.value)">
-                <option value="1">8pt</option>
-                <option value="2">10pt</option>
-                <option value="3">12pt</option>
-                <option value="4">14pt</option>
-                <option value="5">18pt</option>
-                <option value="6">24pt</option>
-            </select>
-            <button class="toolbar-button" onclick="saveText()">Metni Kaydet</button>
-            <button class="toolbar-button" onclick="logout()">Çıkış Yap</button>
-        </div>
-        <div id="editor" contenteditable="true" spellcheck="true">Buraya yazınız...</div>
-        <div id="stats">
-            Karakter: <span id="charCount">0</span> | 
-            Kelime: <span id="wordCount">0</span> | 
-            Satır: <span id="lineCount">0</span>
-        </div>
-        <div id="emojiPicker">
-            <span onclick="insertEmoji('😊')">😊</span>
-            <span onclick="insertEmoji('😂')">😂</span>
-            <span onclick="insertEmoji('❤️')">❤️</span>
-            <span onclick="insertEmoji('🔥')">🔥</span>
-        </div>
-        <div id="findReplace">
-            <input type="text" id="findText" placeholder="Bul">
-            <input type="text" id="replaceText" placeholder="Değiştir">
-            <button onclick="findAndReplace()">Uygula</button>
+            <button onclick="closeModal('settingsModal')">Kapat</button>
         </div>
     </div>
-
-    <audio id="backgroundAudio" autoplay loop></audio>
+    <div class="modal-overlay" id="settingsOverlay"></div>
 
     <script>
-        // Kullanıcı kayıtları (basit bir örnek için localStorage kullanıyoruz)
-        let users = JSON.parse(localStorage.getItem('users')) || [];
-
-        // Giriş yapma fonksiyonu
-        function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            const user = users.find(u => u.username === username && u.password === password);
-            if (user) {
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('currentUser', username);
-                showEditorPage();
-            } else {
-                document.getElementById('error-message').style.display = 'block';
-            }
-        }
-
-        // Çıkış yapma fonksiyonu
-        function logout() {
-            localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('currentUser');
-            showLoginPage();
-        }
-
-        // Giriş sayfasını göster
-        function showLoginPage() {
-            document.getElementById('login-page').style.display = 'block';
-            document.getElementById('editor-page').style.display = 'none';
-        }
-
-        // Metin düzenleyici sayfasını göster
-        function showEditorPage() {
-            document.getElementById('login-page').style.display = 'none';
-            document.getElementById('editor-page').style.display = 'block';
-        }
-
-        // Sayfa yüklendiğinde kullanıcı giriş durumunu kontrol et
-        window.onload = function () {
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
-            if (isLoggedIn === 'true') {
-                showEditorPage();
-                playBackgroundAudio(); // Kullanıcı giriş yaptığında sesi çal
-            } else {
-                showLoginPage();
-            }
-
-            // Kaydedilmiş metni yükle
-            let savedText = localStorage.getItem("savedText");
-            if (savedText) {
-                document.getElementById("editor").innerHTML = savedText;
-            }
-
-            // MP3 dosyasını yükleme
-            document.getElementById('backgroundAudio').src = 'm.mp3';
-        };
-
-        // Metin biçimlendirme fonksiyonları
-        function formatText(command) {
-            document.execCommand(command, false, null);
+        // Temel metin düzenleme fonksiyonları
+        function formatText(command, value) {
+            document.execCommand(command, false, value);
         }
 
         function alignText(command) {
             document.execCommand(command, false, null);
-        }
-
-        function changeColor(color) {
-            document.execCommand('foreColor', false, color);
-        }
-
-        function changeBgColor(color) {
-            document.execCommand('hiliteColor', false, color);
-        }
-
-        function changeFont(font) {
-            document.execCommand('fontName', false, font);
-        }
-
-        function changeFontSize(size) {
-            document.execCommand('fontSize', false, size);
         }
 
         function insertList(command) {
@@ -304,8 +342,8 @@
         }
 
         function insertTable() {
-            let rows = prompt("Satır sayısını girin:", 2);
-            let cols = prompt("Sütun sayısını girin:", 2);
+            let rows = prompt("Lütfen tablonuzun satır sayısını girin:", 2);
+            let cols = prompt("Lütfen tablonuzun sütun sayısını girin:", 2);
             if (rows > 0 && cols > 0) {
                 let table = "<table border='1'>";
                 for (let i = 0; i < rows; i++) {
@@ -321,22 +359,29 @@
         }
 
         function insertImage() {
-            let url = prompt("Resim URL'sini girin:");
+            let url = prompt("Lütfen resmin URL'sini girin:");
             if (url) {
-                document.execCommand('insertImage', false, url);
+                const img = new Image();
+                img.src = url;
+                img.onload = function() {
+                    document.execCommand('insertImage', false, url);
+                };
+                img.onerror = function() {
+                    alert("Geçersiz resim URL'si. Lütfen tekrar deneyin.");
+                };
             }
         }
 
         function insertLink() {
-            let url = prompt("Bağlantı URL'sini girin:");
+            let url = prompt("Lütfen bağlantının URL'sini girin:");
             if (url) {
                 document.execCommand('createLink', false, url);
             }
         }
 
         function insertExcelTable() {
-            let rows = prompt("Satır sayısını girin:", 5);
-            let cols = prompt("Sütun sayısını girin:", 5);
+            let rows = prompt("Lütfen Excel tablosunun satır sayısını girin:", 5);
+            let cols = prompt("Lütfen Excel tablosunun sütun sayısını girin:", 5);
             if (rows > 0 && cols > 0) {
                 let table = "<table border='1' style='border-collapse: collapse;'>";
                 for (let i = 0; i < rows; i++) {
@@ -352,247 +397,233 @@
         }
 
         function insertWordArt() {
-            let text = prompt("WordArt metnini girin:");
+            let text = prompt("Lütfen WordArt metnini girin:");
             if (text) {
                 let wordArt = `<span style="font-family: 'Comic Sans MS', cursive, sans-serif; font-size: 2em; color: #ff6b6b; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);">${text}</span>`;
                 document.execCommand('insertHTML', false, wordArt);
             }
         }
 
-        function saveText() {
-            let text = document.getElementById("editor").innerHTML;
-            localStorage.setItem("savedText", text);
-            alert("Metin kaydedildi!");
-        }
-
-        function buyutYazi() {
-            const yaziElementi = document.getElementById('editor');
-            const mevcutBoyut = window.getComputedStyle(yaziElementi, null).getPropertyValue('font-size');
-            const yeniBoyut = parseFloat(mevcutBoyut) + 2;
-            yaziElementi.style.fontSize = yeniBoyut + 'px';
-        }
-
-        function yeniYaziTipi() {
-            const yaziElementi = document.getElementById('editor');
-            yaziElementi.style.fontFamily = 'Arial, sans-serif';
-        }
-
-        // Metin ve tabloyu aynı dosyada indirme fonksiyonu
-        function downloadContentAsFile() {
-            const textContent = document.getElementById("editor").innerHTML; // Metin içeriğini al
-            const tableContent = document.querySelector("#editor table"); // Tabloyu al
-            let content = `<html><body>${textContent}`;
-            if (tableContent) {
-                content += tableContent.outerHTML; // Tabloyu ekle
-            }
-            content += `</body></html>`;
-            const blob = new Blob([content], { type: "text/html;charset=utf-8" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "metin_ve_tablo.html"; // Dosya adı
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        // Gece modu fonksiyonu
-        function toggleDarkMode() {
-            const body = document.body;
-            body.classList.toggle('dark-mode');
-            localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
-        }
-
-        // Emoji ekleme fonksiyonu
-        function openEmojiPicker() {
-            const picker = document.getElementById('emojiPicker');
-            picker.style.display = 'block';
-        }
-
-        function insertEmoji(emoji) {
-            const editor = document.getElementById('editor');
-            editor.innerHTML += emoji;
-            document.getElementById('emojiPicker').style.display = 'none';
-        }
-
-        // Bul ve değiştir fonksiyonu
-        function openFindReplace() {
-            const findReplace = document.getElementById('findReplace');
-            findReplace.style.display = 'block';
-        }
-
-        function findAndReplace() {
-            const editor = document.getElementById('editor');
-            const findText = document.getElementById('findText').value;
-            const replaceText = document.getElementById('replaceText').value;
-            const content = editor.innerHTML;
-            const newContent = content.replace(new RegExp(findText, 'g'), replaceText);
-            editor.innerHTML = newContent;
-        }
-
-        // Metin istatistiklerini güncelleme fonksiyonu
-        function updateStats() {
-            const editor = document.getElementById('editor');
-            const text = editor.innerText;
-
-            // Karakter sayısı
-            const charCount = text.length;
-            document.getElementById('charCount').textContent = charCount;
-
-            // Kelime sayısı
-            const wordCount = text.trim().split(/\s+/).filter(word => word.length > 0).length;
-            document.getElementById('wordCount').textContent = wordCount;
-
-            // Satır sayısı
-            const lineCount = text.split('\n').length;
-            document.getElementById('lineCount').textContent = lineCount;
-        }
-
-        // Editor içeriği değiştiğinde istatistikleri güncelle
-        document.getElementById('editor').addEventListener('input', updateStats);
-
-        // Sürükle-bırak ile resim ekleme
-        const editor = document.getElementById('editor');
-
-        editor.addEventListener('dragover', (e) => {
-            e.preventDefault();
-        });
-
-        editor.addEventListener('drop', (e) => {
-            e.preventDefault();
-            const file = e.dataTransfer.files[0];
-            if (file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const img = document.createElement('img');
-                    img.src = event.target.result;
-                    editor.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
         // PDF indirme fonksiyonu
         function downloadAsPDF() {
-            const { jsPDF } = window.jspdf; // jsPDF kütüphanesini kullanıyoruz
+            const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-
-            // Metin içeriğini al
             const content = document.getElementById("editor");
-
-            // HTML içeriğini PDF'ye ekle
-            html2canvas(content, { scale: 2, backgroundColor: "#ffffff" }).then(canvas => { // Arka plan rengi beyaz
+            html2canvas(content, { scale: 2, backgroundColor: "#ffffff" }).then(canvas => {
                 const imgData = canvas.toDataURL('image/png');
-                const imgWidth = 190; // PDF sayfasının genişliği
-                const pageHeight = 295; // PDF sayfasının yüksekliği
+                const imgWidth = 190;
+                const pageHeight = 295;
                 const imgHeight = (canvas.height * imgWidth) / canvas.width;
                 let heightLeft = imgHeight;
-
                 let position = 0;
-
-                // İlk sayfayı ekle
                 doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
                 heightLeft -= pageHeight;
-
-                // Eğer daha fazla sayfa varsa, yeni sayfalar ekle
                 while (heightLeft >= 0) {
                     position = heightLeft - imgHeight;
                     doc.addPage();
                     doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
                     heightLeft -= pageHeight;
                 }
-
-                // PDF dosyasını indirme
                 doc.save('metin.pdf');
             }).catch(error => {
                 console.error("Canvas oluşturma hatası:", error);
             });
         }
 
-        // Düz metin olarak indirme fonksiyonu
-        function downloadTextAsFile() {
-            const text = document.getElementById("editor").innerText; // Düz metin al
-            const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "metin.txt"; // Düz metin dosyası adı
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+        // Emoji ekleme fonksiyonları
+        function openEmojiPicker() {
+            openModal('emojiPickerModal');
         }
 
-        // HTML olarak indirme fonksiyonu
-        function downloadHTMLAsFile() {
-            const htmlContent = document.getElementById("editor").innerHTML; // HTML içeriğini al
-            const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "metin.html"; // HTML dosyası adı
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+        function insertEmoji(emoji) {
+            const editor = document.getElementById('editor');
+            editor.innerHTML += emoji;
+            closeModal('emojiPickerModal');
         }
 
-        // Tabloyu indirme fonksiyonu
-        function downloadTableAsFile() {
-            const table = document.querySelector("#editor table"); // Editor içindeki tabloyu al
-            if (!table) {
-                alert("Tablo bulunamadı!");
+        // Bul ve değiştir fonksiyonları
+        function openFindReplaceModal() {
+            openModal('findReplaceModal');
+        }
+
+        function findAndReplace() {
+            const editor = document.getElementById('editor');
+            const findText = document.getElementById('findText').value;
+            const replaceText = document.getElementById('replaceText').value;
+            if (!findText) {
+                alert("Lütfen bulunacak metni girin!");
                 return;
             }
-            const blob = new Blob([table.outerHTML], { type: "text/html;charset=utf-8" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "tablo.html"; // Tablo dosyası adı
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            const content = editor.innerHTML;
+            const newContent = content.replace(new RegExp(findText, 'g'), replaceText);
+            editor.innerHTML = newContent;
+            closeModal('findReplaceModal');
         }
 
-        // Kayıt olma fonksiyonu
-        function register() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+        // Modal açma/kapatma fonksiyonları
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            document.getElementById(modalId + 'Overlay').style.display = 'block';
+        }
 
-            // Kullanıcı adı daha önce alınmış mı kontrol et
-            const existingUser = users.find(u => u.username === username);
-            if (existingUser) {
-                alert("Bu kullanıcı adı zaten alınmış!");
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.getElementById(modalId + 'Overlay').style.display = 'none';
+        }
+
+        // Tema değiştirme fonksiyonları
+        function changeTheme(theme) {
+            localStorage.setItem('theme', theme);
+            if (theme === 'light') {
+                document.body.style.backgroundColor = '#ffffff'; // Açık tema
+                document.body.style.color = '#333';
+            } else if (theme === 'dark') {
+                document.body.style.backgroundColor = '#333'; // Koyu tema
+                document.body.style.color = '#ffffff';
+            } else if (theme === 'blue') {
+                document.body.style.backgroundColor = '#007bff'; // Mavi tema
+                document.body.style.color = '#ffffff';
+            } else if (theme === 'green') {
+                document.body.style.backgroundColor = '#28a745'; // Yeşil tema
+                document.body.style.color = '#ffffff';
+            }
+        }
+
+        // İstatistikleri güncelleme fonksiyonu
+        function updateStats() {
+            const editor = document.getElementById('editor');
+            const text = editor.innerText;
+            document.getElementById('charCount').textContent = text.length;
+            document.getElementById('wordCount').textContent = text.trim().split(/\s+/).filter(word => word.length > 0).length;
+            document.getElementById('lineCount').textContent = text.split('\n').length;
+            document.getElementById('sentenceCount').textContent = text.split(/[.!?]+/).filter(sentence => sentence.trim().length > 0).length;
+            document.getElementById('paragraphCount').textContent = text.split('\n\n').length;
+        }
+
+        document.getElementById('editor').addEventListener('input', updateStats);
+
+        // Çeviri fonksiyonu
+        function translateText() {
+            const editor = document.getElementById('editor');
+            const text = editor.innerText;
+            const targetLang = prompt("Lütfen hedef dili girin (örneğin: 'en'):");
+            if (targetLang) {
+                const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=auto|${targetLang}`;
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.responseData) {
+                            editor.innerText = data.responseData.translatedText;
+                        } else {
+                            alert("Çeviri başarısız oldu.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Çeviri hatası:", error);
+                    });
+            }
+        }
+
+        // Sesli okuma fonksiyonu
+        function speakText() {
+            const editor = document.getElementById('editor');
+            const text = editor.innerText;
+            if (text.trim() === "") {
+                alert("Okunacak metin bulunamadı!");
                 return;
             }
-
-            // Yeni kullanıcıyı kaydet
-            users.push({ username, password });
-            localStorage.setItem('users', JSON.stringify(users));
-            alert("Kayıt başarılı! Giriş yapabilirsiniz.");
+            const utterance = new SpeechSynthesisUtterance(text);
+            speechSynthesis.speak(utterance);
         }
 
-        // Arka plan sesini çalma fonksiyonu
-        function playBackgroundAudio() {
-            const audio = document.getElementById('backgroundAudio');
-            audio.play().catch(error => {
-                console.log("Ses çalma hatası:", error);
-            });
+        function changeTextColor() {
+            openModal('colorPickerModal');
         }
 
-        // Ses çalma/durdurma fonksiyonu
-        function toggleAudio() {
-            const audio = document.getElementById('backgroundAudio');
-            if (audio.paused) {
-                audio.play().catch(error => {
-                    console.log("Ses çalma hatası:", error);
-                });
-            } else {
-                audio.pause();
+        function applyTextColor() {
+            const color = document.getElementById('textColor').value;
+            formatText('foreColor', color);
+            closeModal('colorPickerModal');
+        }
+
+        function changeTextSize() {
+            openModal('textSizeModal');
+        }
+
+        function applyTextSize() {
+            const size = document.getElementById('textSize').value;
+            document.execCommand('fontSize', false, '7');
+            const span = document.createElement('span');
+            span.style.fontSize = size + 'pt';
+            span.innerHTML = document.getElementById('editor').innerHTML;
+            document.getElementById('editor').innerHTML = span.outerHTML;
+            closeModal('textSizeModal');
+        }
+
+        function undo() {
+            document.execCommand('undo');
+        }
+
+        function redo() {
+            document.execCommand('redo');
+        }
+
+        function showFeedback(message) {
+            const feedback = document.createElement('div');
+            feedback.innerText = message;
+            feedback.style.position = 'fixed';
+            feedback.style.bottom = '20px';
+            feedback.style.right = '20px';
+            feedback.style.backgroundColor = '#28a745';
+            feedback.style.color = 'white';
+            feedback.style.padding = '10px';
+            feedback.style.borderRadius = '5px';
+            document.body.appendChild(feedback);
+            setTimeout(() => {
+                document.body.removeChild(feedback);
+            }, 2000);
+        }
+
+        function copyText() {
+            document.execCommand('copy');
+        }
+
+        function pasteText() {
+            document.execCommand('paste');
+        }
+
+        function playSound() {
+            const audio = new Audio('notification.mp3'); // Ses dosyasının yolu
+            audio.play();
+        }
+
+        function changeFontFamily() {
+            const fontFamily = document.getElementById('fontFamily').value;
+            document.execCommand('fontName', false, fontFamily);
+        }
+
+        function printDocument() {
+            const editorContent = document.getElementById('editor').innerHTML;
+            const printWindow = window.open('', '', 'height=600,width=800');
+            printWindow.document.write('<html><head><title>Yazdır</title>');
+            printWindow.document.write('<style>body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; }</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(editorContent);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('theme');
+            const savedSize = localStorage.getItem('textSize');
+            if (savedTheme) {
+                changeTheme(savedTheme);
             }
-        }
+            if (savedSize) {
+                document.getElementById('textSize').value = savedSize;
+            }
+        };
     </script>
 </body>
 </html>
